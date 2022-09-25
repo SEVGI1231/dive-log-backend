@@ -27,8 +27,14 @@ const client = new Client(dbConfig);
 client.connect();
 
 app.get("/", async (req, res) => {
-  const dbres = await client.query('select * from categories');
-  res.json(dbres.rows);
+  try{
+    const dbres = await client.query('select * from users');
+    res.json(dbres.rows);
+  }
+  catch(error){
+    res.send("upps error!");
+    console.log(error)
+  }
 });
 
 
