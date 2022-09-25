@@ -46,6 +46,18 @@ app.get("/dives", async (req,res)=>{
     console.log(error)
   }
 })
+app.post("/new/dive", async(req, res)=>{
+  try{
+  const {user_id, location, max_depth, duration, difficulty, summary, buddy_name, visibility, air_used, water_type, is_training_dive}= req.body;
+  const addNewDive= await client.query('insert into divelog (user_id, location, max_depth, duration, difficulty, summary, buddy_name, visibility, air_used, water_type, is_training_dive) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)', 
+  [user_id, location, max_depth, duration, difficulty, summary, buddy_name, visibility, air_used, water_type, is_training_dive]);
+  res.send('new dive has been added')
+  }
+  catch(error){
+    res.send("Upps error");
+    console.log(error)
+  }
+})
 
 
 //Start the server on the given port
