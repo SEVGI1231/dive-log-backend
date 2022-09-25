@@ -26,16 +26,26 @@ app.use(cors()) //add CORS support to each following route handler
 const client = new Client(dbConfig);
 client.connect();
 
-app.get("/", async (req, res) => {
+app.get("/users", async (req, res) => {
   try{
-    const dbres = await client.query('select * from users');
-    res.json(dbres.rows);
+    const users = await client.query('select * from users');
+    res.json(users.rows);
   }
   catch(error){
-    res.send("upps error!");
+    res.send("Upps error!");
     console.log(error)
   }
 });
+app.get("/dives", async (req,res)=>{
+  try{
+    const dives= await client.query('select * from divelog');
+    res.json(dives.rows);
+  }
+  catch(error){
+    res.send("Upps error!");
+    console.log(error)
+  }
+})
 
 
 //Start the server on the given port
