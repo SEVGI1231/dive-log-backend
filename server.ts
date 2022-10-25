@@ -38,7 +38,7 @@ app.get("/users", async (req, res) => {
 });
 app.get("/dives", async (req,res)=>{
   try{
-    const dives= await client.query('select * from divelog');
+    const dives= await client.query('select * from divelog order by date desc');
     res.json(dives.rows);
   }
   catch(error){
@@ -46,11 +46,24 @@ app.get("/dives", async (req,res)=>{
     console.log(error)
   }
 })
-app.post("/new/dive", async(req, res)=>{
+app.get("/dives/:diveid", async (req,res)=>{
   try{
-  const {user_id, location, max_depth, duration, difficulty, summary, buddy_name, visibility, air_used, water_type, is_training_dive}= req.body;
-  const addNewDive= await client.query('insert into divelog (user_id, location, max_depth, duration, difficulty, summary, buddy_name, visibility, air_used, water_type, is_training_dive) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)', 
-  [user_id, location, max_depth, duration, difficulty, summary, buddy_name, visibility, air_used, water_type, is_training_dive]);
+    const diveid= req.params.diveid;
+    const dives= await client.query('select * from divelog where dive_key=$1',[diveid]);
+    res.json(dives.rows);
+  } 
+  catch(error){
+    res.send("Upps error!");
+    console.log(error)
+  }
+})
+app.post("/new/dive", async(req, res)=>{
+  //add dive date to database
+  //add water and air temps to database
+  try{
+  const {diver_name, location, max_depth, duration, difficulty, summary, buddy_name, visibility, air_used, water_type, is_training_dive, date, water_temp, air_temp}= req.body;
+  const addNewDive= await client.query('insert into divelog (diver_name, location, max_depth, duration, difficulty, summary, buddy_name, visibility, air_used, water_type, is_training_dive, date, water_temp, air_temp) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)', 
+  [diver_name, location, max_depth, duration, difficulty, summary, buddy_name, visibility, air_used, water_type, is_training_dive, date, water_temp, air_temp]);
   res.send('new dive has been added')
   }
   catch(error){
